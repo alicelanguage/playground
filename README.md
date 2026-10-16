@@ -66,7 +66,7 @@ Any page can turn code blocks into live, editable playgrounds:
 
 | Attribute | Effect |
 |---|---|
-| `data-run` | compile and run on load (otherwise compile only) |
+| `data-run` | load .NET and run immediately (by default nothing loads until the reader presses **Run**) |
 | `data-stages` | show the HIR / MIR / C# / IL tabs above the console |
 | `data-readonly` | lock the source |
 | `data-height="300"` | iframe height in px (default from the line count) |

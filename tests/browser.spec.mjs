@@ -148,3 +148,16 @@ test('autocomplete suggests names while typing and accepts with Tab', async ({ p
   await page.keyboard.press('Tab');
   await expect(page.locator('#source')).toHaveValue('rabbits = 3\nrabbits.times\nMath.Sqrt');
 });
+
+test('embeds load .NET only when Run is pressed', async ({ page }) => {
+  const workers = [];
+  page.on('worker', w => workers.push(w));
+  await page.goto('/?embed=1#code=' + token('puts "lazy"'));
+  await expect(page.locator('#run')).toBeEnabled();
+  await expect(page.locator('#console-output')).toContainText('Press ▶ Run');
+  await page.waitForTimeout(1500);
+  expect(workers.length).toBe(0);
+  await page.locator('#run').click();
+  await expect(page.locator('#console-output')).toContainText('lazy', { timeout:120000 });
+  expect(workers.length).toBe(1);
+});

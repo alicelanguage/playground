@@ -4,7 +4,7 @@
 //   <pre data-alice-playground data-run data-stages data-readonly data-height="260">puts "hi"</pre>
 //
 // Each block becomes an iframe of the playground in embed mode (its own .NET worker, nothing sent to a server).
-// Attributes: data-run (run on load), data-stages (show HIR/MIR/C#/IL), data-readonly, data-height (px).
+// .NET loads only when the reader presses Run. Attributes: data-run (load and run immediately instead), data-stages (show HIR/MIR/C#/IL), data-readonly, data-height (px).
 const base = new URL('./', import.meta.url);
 const b64 = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 async function pack(text) {

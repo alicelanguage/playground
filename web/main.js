@@ -100,9 +100,11 @@ function status(text, state = '') {
   $('status').textContent = text;
   $('runtime-state').dataset.state = state;
 }
+// Embeds load .NET lazily: Run stays enabled before the runtime exists and starts it on click.
+const lazy = () => embed && !worker;
 function controls() {
-  $('compile').disabled = busy || !ready;
-  $('run').disabled = busy || !ready;
+  $('compile').disabled = busy || (!ready && !lazy());
+  $('run').disabled = busy || (!ready && !lazy());
   $('examples').disabled = busy || !ready;
   $('stop').disabled = !busy;
 }
@@ -444,4 +446,9 @@ $('open-playground').onclick = async event => {
   event.preventDefault();
   window.open(new URL('./#code=' + await pack(source.value), location.href), '_blank', 'noopener');
 };
-start(() => compile(embed && params.get('run') === '1'));
+if (embed && params.get('run') !== '1') {
+  // nothing downloads until the reader presses Run (Ctrl+Enter works too)
+  $('result').innerHTML = '<div class="stage-scroll"></div><section class="console" aria-label="Console output"><div class="console-head"><span>Console</span><span class="result-status">Idle</span></div><pre id="console-output"><span class="muted">Press ▶ Run to start .NET and run this example.</span></pre></section>';
+  status('Press Run to load .NET');
+  controls();
+} else start(() => compile(embed && params.get('run') === '1'));
