@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Alice WebAssembly verification</title><body><h1>Alice WebAssembly verification</h1><pre id="report">Loading the real browser worker…</pre><script type="module">
+const report = document.getElementById('report');
+const results = [];
+const worker = new Worker('/worker.js', {type:'module'});
+let id = 0;
+function next(type, send) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Timed out waiting for '+type)), 120000);
+    function onmessage({data}) {
+      if (data.type === 'fatal' || data.type === 'error') { clearTimeout(timeout); worker.removeEventListener('message', onmessage); reject(new Error(data.error)); }
+      else if (data.type === type) {clearTimeout(timeout); worker.removeEventListener('message',onmessage); resolve(data);}
+    }
+    worker.addEventListener('message', onmessage);
+    if (send) worker.postMessage(send);
+  });
+}
+function check(condition, label) {
+  if (!condition) throw new Error(label);
+  results.push({passed:true,label});
+  report.textContent = results.map(r=>'PASS: '+r.label).join('\n');
+}
+async function compile(source, run=true) {
+  const data = await next('result',{type:'compile',id:++id,source,run,stage:'il'});
+  return {...JSON.parse(data.result), html:data.html, raw:data.result};
+}
+try {
+  await next('ready');
+  check(true,'Real .NET WebAssembly worker initialized');
+  const r = await compile('xs = [1, 2, 3]\nputs xs.map { |x| x * 2 }.sum');
+  check(r.Success, 'Alice compiled in the browser: '+r.Error);
+  check(r.Output.trim()==='12','Generated IL executed in browser .NET');
+  check(r.Hir.includes('CallExpr') && r.Hir.includes('int'),'Typed HIR');
+  check(r.Mir.includes('MFor'),'Actual lowered MIR');
+  check(r.CSharp.includes('public static void Main'),'Generated C#');
+  check(r.Il.includes('IL_') && r.Il.includes('call'),'PE IL decoded by Alice');
+  for (const name of ['pipeline','fibonacci','types']) {
+    const example = await next('example',{type:'example',name});
+    const result = await compile(example.source);
+    check(result.Success && result.Output.length>0, name+' example runs: '+result.Error);
+  }
+  const evaluated = await compile('puts \"hello\"\n6 * 7');
+  check(evaluated.Success && evaluated.Output.trim()==='hello' && evaluated.HasValue && evaluated.Value==='42' && evaluated.html.includes('id=execution-value'), 'Separate console output and final expression result');
+  const bad = await compile('val x = 1\nx = 2\nputs x');
+  check(!bad.Success && bad.Diagnostics.some(d=>d.Line===2),'Positioned Alice safety errors');
+  const fail = await compile('puts "before"\nraise "boom"');
+  check(!fail.Success && fail.Output.includes('before') && fail.Error.includes('boom') && fail.Il.length>0,'Runtime errors retain stages and partial output');
+  const noRun = await compile('raise "must not run"', false);
+  check(noRun.Success && noRun.Output==='', 'Compile-only never runs user code');
+  const escaped = await compile('puts "<script>alert(1)<\/script>"');
+  check(escaped.html.includes('&lt;script&gt;') && !escaped.html.includes('<script>alert'), 'Alice HTML rendering escapes program output');
+  const lib = await compile('def square(x : Int32) : Int32\n x * x\nend',false);
+  check(lib.Success && lib.Il.includes('square'),'Library inspection without entry point');
+  const bounded = await compile('100000.times { puts "xxxxxxxxxx" }');
+  check(!bounded.Success && bounded.Output.length<=65536 && bounded.Error.includes('64 KiB'),'Console output bounded');
+  document.body.dataset.passed='true';
+  await fetch('/__report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({passed:true,results})});
+} catch(error) {
+  results.push({passed:false,label:String(error)});
+  report.textContent += '\nFAIL: '+error+'\n'+(error.stack||'');
+  document.body.dataset.passed='false';
+  await fetch('/__report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({passed:false,results})});
+} finally { worker.terminate(); }
+</script></body></html>

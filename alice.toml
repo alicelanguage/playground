@@ -1,0 +1,17 @@
+[package]
+name = "Alice.Playground"
+kind = "lib"
+version = "0.10.1"
+target = "net10.0"
+
+[toolchain]
+repository = "alicelanguage/alice"
+version = "0.10.1"
+linux_x64_sha256 = "9caf24ab7cc4a09d2403b583cc4f54a9c6a1adbc2010dae010273f9570e1b3be"
+cecil_version = "0.11.6"
+cecil_sha256 = "d2a23832aaa948ba9a01acc42b5726e34c5f995958f1b30d45c0e7c70b3a72d5"
+
+[playground]
+core = "src/Application/*.al"
+browser = "src/Browser/*.al"
+output = "dist"
