@@ -49,11 +49,12 @@ namespace Alice.Playground
       end
       output = result.Output.Length == 0 ? "<span class=muted>No console output.</span>" : Escape(result.Output)
       status = result.Success ? "Completed" : "Error"
+      status_class = result.Success ? "result-status" : "result-status failed"
       value_html = result.HasValue ? "<div class=return-row><span>Result</span><code id=execution-value>⇒ #{Escape(result.Value)}</code><span class=value-type>#{Escape(result.ValueType)}</span></div>" : ""
       <<~HTML
         <div class="stage-scroll"><pre id="stage-code" tabindex="0">#{Escape(code)}</pre></div>
         <section class="console" aria-label="Console output" tabindex="0">
-          <div class="console-head"><span>Console</span><span class="result-status">#{status}</span></div>
+          <div class="console-head"><span>Console</span><span class="#{status_class}">#{status}</span></div>
           <pre id="console-output">#{output}</pre>
           #{value_html}
           <div id="diagnostics" role="status">#{messages.ToString}</div>
@@ -118,7 +119,7 @@ namespace Alice.Playground
           .stage-label{margin-left:auto;align-self:center;font:9px var(--mono);letter-spacing:1px;color:#8a8173;padding-right:16px;display:flex;gap:10px;align-items:center}#timing{color:var(--glow)}
           #result{display:flex;flex:1;flex-direction:column;min-height:0}.stage-scroll{flex:1;min-height:0;overflow:auto;padding:22px;overscroll-behavior:contain;scrollbar-gutter:stable}.stage-scroll pre{margin:0;font:11.5px/1.8 var(--mono);tab-size:4;white-space:pre;color:#e6dccb}
           .empty{color:#968c7c;font:12px/1.9 var(--mono);margin:0}.spinner{display:inline-block;width:10px;height:10px;border:2px solid #f1d6bd55;border-top-color:var(--glow);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:-1px}@keyframes spin{to{transform:rotate(360deg)}}
-          .console{flex:0 0 200px;min-height:110px;max-height:46%;overflow:auto;background:#191715;border-top:1px solid var(--night-line);padding:0 20px 18px;overscroll-behavior:contain;scrollbar-gutter:stable}.console-head{display:flex;justify-content:space-between;position:sticky;top:0;background:#191715;padding:12px 0;font:10px var(--mono);letter-spacing:1px;color:#a39985;z-index:1}.result-status{color:#9cc29a}
+          .console{flex:0 0 200px;min-height:110px;max-height:46%;overflow:auto;background:#191715;border-top:1px solid var(--night-line);padding:0 20px 18px;overscroll-behavior:contain;scrollbar-gutter:stable}.console-head{display:flex;justify-content:space-between;position:sticky;top:0;background:#191715;padding:12px 0;font:10px var(--mono);letter-spacing:1px;color:#a39985;z-index:1}.result-status{color:#9cc29a}.result-status.failed{color:#f08ba1}
           #console-output{font:12px/1.8 var(--mono);white-space:pre;color:#ece3d4;margin:6px 0}.muted{color:#7c7366}
           .diagnostic{border:0;background:#3a1f26;color:#f6c3cf;display:block;width:100%;padding:10px 12px;text-align:left;font:11px/1.6 var(--mono);border-left:3px solid var(--cherry);border-radius:4px;margin-top:10px}.diagnostic:hover{background:#45232c}.diagnostic span{display:block;color:#d999a8;margin-bottom:4px}.error{white-space:pre-wrap;color:#f6c3cf;font:11px/1.8 var(--mono)}
           .return-row{display:flex;align-items:baseline;gap:12px;border-top:1px solid #36312b;padding:12px 0 0;margin-top:14px;font:10px var(--mono);color:#a39985}.return-row code{font:12px var(--mono);color:var(--glow);white-space:pre}.value-type{margin-left:auto;color:#8a7f6e}
