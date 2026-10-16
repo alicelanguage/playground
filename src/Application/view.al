@@ -77,6 +77,8 @@ namespace Alice.Playground
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <meta name="theme-color" content="#f5efe0">
           <meta name="description" content="Write Alice, inspect HIR, MIR, C# and IL, and run it on .NET in your browser.">
+          <link rel="canonical" href="https://play.alice-lang.org/">
+          <meta property="og:url" content="https://play.alice-lang.org/">
           <meta property="og:title" content="Alice Playground — Follow your code.">
           <meta property="og:description" content="Write Alice, inspect HIR, MIR, C# and IL, and run it on .NET WebAssembly in your browser.">
           <link rel="icon" type="image/svg+xml" href="./brand/alice-icon.svg">
@@ -147,8 +149,8 @@ namespace Alice.Playground
         <body>
           <a class="skip" href="#source">Skip to editor</a>
           <header>
-            <div class="identity"><a class="wordmark" href="https://github.com/alicelanguage/alice" aria-label="Alice"><img src="./brand/alice-mark.svg" alt="" width="38" height="38"><span>alice<span class="dot">.</span></span></a><span class="chip">playground · <b>v0.10.1</b></span></div>
-            <nav aria-label="Resources"><a class="hide-sm" href="https://github.com/alicelanguage/alice/blob/main/docs/language.md" target="_blank" rel="noreferrer">Language guide ↗</a><a class="hide-sm" href="#install">Install</a><button id="shortcuts" class="control ghost" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">Keys</button><a class="gh" href="https://github.com/alicelanguage/alice" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
+            <div class="identity"><a class="wordmark" href="https://alice-lang.org" aria-label="Alice home"><img src="./brand/alice-mark.svg" alt="" width="38" height="38"><span>alice<span class="dot">.</span></span></a><span class="chip">playground · <b>v0.10.1</b></span></div>
+            <nav aria-label="Resources"><a class="hide-sm" href="https://github.com/alicelanguage/alice/blob/main/docs/language.md" target="_blank" rel="noreferrer">Language guide ↗</a><a class="hide-sm" href="https://alice-lang.org">alice-lang.org</a><a class="hide-sm" href="#install">Install</a><button id="shortcuts" class="control ghost" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">Keys</button><a class="gh" href="https://github.com/alicelanguage/alice" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
           </header>
           <main>
             <div class="intro"><div><span class="eyebrow"><span class="diamond"></span> ALICE → HIR → MIR → C# → IL → .NET</span><h1>Follow your code. <em>All the way down.</em></h1></div><p>Write Alice on the left. Inspect every compiler stage on the right, then run the emitted IL on .NET WebAssembly. Nothing leaves your browser.</p></div>
@@ -172,7 +174,7 @@ namespace Alice.Playground
             <section id="install" class="install" aria-labelledby="install-title">
               <div><h2 id="install-title">Take Alice <em>home.</em></h2><p>One command installs the latest release (and the .NET 10 SDK if needed). Then <code>alice</code> opens the REPL.</p></div>
               <div><div class="seg" role="group" aria-label="Platform"><button type="button" data-install="unix" aria-pressed="true">macOS / Linux</button><button type="button" data-install="windows" aria-pressed="false">Windows</button></div>
-              <div class="cmd"><span class="p" id="install-prompt">$</span><code id="install-command">curl -fsSL https://github.com/alicelanguage/alice/releases/latest/download/install.sh | sh</code><button id="copy-install" type="button">Copy</button></div></div>
+              <div class="cmd"><span class="p" id="install-prompt">$</span><code id="install-command">curl -fsSL https://alice-lang.org/install.sh | sh</code><button id="copy-install" type="button">Copy</button></div></div>
             </section>
           </main>
           <dialog id="keys" aria-labelledby="keys-title"><h2 id="keys-title">Shortcuts</h2><table>

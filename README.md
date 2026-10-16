@@ -59,7 +59,7 @@ npx wrangler@4.151.1 pages deploy dist --project-name YOUR_PROJECT
 Any page can turn code blocks into live, editable playgrounds:
 
 ```html
-<script type="module" src="https://YOUR-PLAYGROUND/embed.js"></script>
+<script type="module" src="https://play.alice-lang.org/embed.js"></script>
 <pre data-alice-playground data-run>puts "Hello from the docs"
 6 * 7</pre>
 ```

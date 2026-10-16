@@ -394,8 +394,8 @@ $('download').onclick = () => {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
 const INSTALL = {
-  unix: ['$', 'curl -fsSL https://github.com/alicelanguage/alice/releases/latest/download/install.sh | sh'],
-  windows: ['PS>', 'irm https://github.com/alicelanguage/alice/releases/latest/download/install.ps1 | iex'],
+  unix: ['$', 'curl -fsSL https://alice-lang.org/install.sh | sh'],
+  windows: ['PS>', 'irm https://alice-lang.org/install.ps1 | iex'],
 };
 function chooseInstall(os) {
   document.querySelectorAll('[data-install]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.install === os)));
