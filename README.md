@@ -22,6 +22,9 @@ The build downloads **Alice v0.10.1** from [GitHub Releases](https://github.com/
 
 ## Cloudflare Pages
 
+Git-connected project (Settings → Builds): framework preset **None**, build command **`bash scripts/cloudflare-build.sh`**, build output directory **`dist`**, root directory empty. The script installs the SDK pinned in `global.json` and the `wasm-tools` workload (the Pages image has no .NET), then runs `scripts/build.py`.
+
+
 Deploy **`dist/` as a static Pages site**. No Functions, Workers backend, database, or .NET server is needed. The build checks that every asset is under Pages’ 25 MiB limit and includes `_headers`, WASM MIME-compatible assets, fingerprinted assemblies, and third-party notices.
 
 For GitHub Actions, put the contents of this directory at the repository root. [`.github/workflows/pages.yml`](.github/workflows/pages.yml) installs the SDK/workload, downloads the pinned release, runs Alice and real-browser tests, and uploads the `cloudflare-pages` artifact.
