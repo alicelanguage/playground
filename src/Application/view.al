@@ -77,8 +77,8 @@ namespace Alice.Playground
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <meta name="theme-color" content="#f5efe0">
           <meta name="description" content="Write Alice, inspect HIR, MIR, C# and IL, and run it on .NET in your browser.">
-          <link rel="canonical" href="https://play.alice-lang.org/">
-          <meta property="og:url" content="https://play.alice-lang.org/">
+          <link rel="canonical" href="https://playground.alice-lang.org/">
+          <meta property="og:url" content="https://playground.alice-lang.org/">
           <meta property="og:title" content="Alice Playground — Follow your code.">
           <meta property="og:description" content="Write Alice, inspect HIR, MIR, C# and IL, and run it on .NET WebAssembly in your browser.">
           <link rel="icon" type="image/svg+xml" href="./brand/alice-icon.svg">
