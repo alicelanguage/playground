@@ -6,6 +6,7 @@
     "build": "python3 scripts/build.py",
     "preview": "python3 scripts/serve.py",
     "test": "python3 scripts/build.py --native-only",
+    "test:assets": "node --test tests/assets.test.mjs",
     "test:browser": "playwright test"
   },
   "devDependencies": {

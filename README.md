@@ -48,6 +48,7 @@ npx wrangler@4.151.1 pages deploy dist --project-name YOUR_PROJECT
 - The source editor, stage view, and console each scroll independently, horizontally and vertically.
 - **Stop** terminates the runtime worker; Run starts a fresh one.
 - Runs stop automatically after 15 seconds; output is limited to 64 KiB.
+- Runtime downloads use compressed, fingerprinted assets. The compiler reuses those verified bytes for its references instead of downloading the DLLs a second time.
 - Click a diagnostic to jump to its source position; failing lines are marked in the gutter.
 - Autocomplete appears while typing (keywords, Prelude, .NET types/members, names in your program); Tab/Enter accepts, Ctrl+Space opens it.
 - **Share** copies a link with the program compressed in the URL fragment; **Download** saves `main.al`.
@@ -78,6 +79,7 @@ Each block becomes an iframe of `/?embed=1&run=1#code=…`: an editor with highl
 ```sh
 python3 scripts/build.py --native-only
 npm ci
+npm run test:assets
 npx playwright install chromium
 npm run test:browser
 ```

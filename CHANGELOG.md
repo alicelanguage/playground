@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Download compressed .NET assemblies once, verify their original boot hashes, and reuse the bytes for compiler references instead of downloading every DLL again.
+- Add a cold-start transfer budget and transport tests for compression, integrity and fallback behavior.
 - Fit embedded playgrounds to their iframe height without an outer scrollbar, while preserving scrolling inside the editor and output panels.
 
 ## 0.10.1 — 2026-10-16

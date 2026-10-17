@@ -33,6 +33,8 @@ try {
   check(r.Mir.includes('MFor'),'Actual lowered MIR');
   check(r.CSharp.includes('public static void Main'),'Generated C#');
   check(r.Il.includes('IL_') && r.Il.includes('call'),'PE IL decoded by Alice');
+  const interop = await compile('using System.Text.RegularExpressions\nusing System.Xml.Linq\nputs Regex.IsMatch("alice42", "[0-9]+")\nputs XDocument.Parse("<alice />").Root.not_nil!.Name.LocalName');
+  check(interop.Success && interop.Output.toLowerCase().includes('true') && interop.Output.includes('alice'), 'Framework reflection and metadata references remain available: '+interop.Error+' '+interop.Output);
   for (const name of ['pipeline','fibonacci','types']) {
     const example = await next('example',{type:'example',name});
     const result = await compile(example.source);

@@ -158,7 +158,6 @@ def main():
         raise RuntimeError("Expected untrimmed .dll assets (WasmEnableWebcil=false)")
     for notice in ("LICENSE", "NOTICE"):
         shutil.copy2(TOOLS / "release" / notice, dist / notice)
-    (dist / "references.json").write_text(json.dumps(["_framework/" + p.name for p in dlls]))
     oversized = [str(p.relative_to(dist)) for p in dist.rglob("*") if p.is_file() and p.stat().st_size > 25 * 1024 * 1024]
     if oversized:
         raise RuntimeError("Cloudflare Pages 25 MiB asset limit exceeded: " + ", ".join(oversized))

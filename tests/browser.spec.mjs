@@ -1,4 +1,25 @@
 import { test, expect } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
+
+test('startup downloads compressed runtime assets once within its transfer budget', async ({ page }) => {
+  const responses = [];
+  page.on('response', response => {
+    if (/\.(?:dll|wasm)(?:\.gz)?$/.test(new URL(response.url()).pathname)) {
+      responses.push({ url: response.url(), bytes: Number(response.headers()['content-length'] ?? 0) });
+    }
+  });
+  await page.goto('/');
+  await expect(page.locator('#stage-code')).toContainText('public static void Main', { timeout:120000 });
+  const assemblies = responses.filter(r => /\.dll(?:\.gz)?$/.test(new URL(r.url).pathname));
+  const bytes = responses.reduce((sum, r) => sum + r.bytes, 0);
+  const report = test.info().outputPath('runtime-transfer.json');
+  await writeFile(report, JSON.stringify({ assemblies: assemblies.length, bytes, responses }, null, 2));
+  await test.info().attach('runtime-transfer', { path: report, contentType: 'application/json' });
+  expect(assemblies.length).toBeGreaterThan(0);
+  expect(assemblies.every(r => r.url.endsWith('.dll.gz'))).toBe(true);
+  expect(new Set(assemblies.map(r => r.url)).size).toBe(assemblies.length);
+  expect(bytes).toBeLessThan(24 * 1024 * 1024);
+});
 
 test('the static artifact compiles and executes on browser .NET', async ({ page }) => {
   await page.goto('/__tests');

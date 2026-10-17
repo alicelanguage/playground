@@ -22,7 +22,7 @@ The published compiler assumes desktop facilities in a few places. `scripts/prep
 
 Desktop proxy behavior, language checks, optimizations, race safety, and null-safety diagnostics are retained. The adapter fails if expected release methods are absent. The release itself and the Alice source repository are untouched. This can be removed when a future release provides these browser hooks directly.
 
-After .NET loads, the Alice browser host fetches the published managed assembly assets into .NET’s virtual filesystem and sets the trusted-platform assembly paths before invoking Roslyn. These are the same untrimmed assemblies used by the browser runtime. They supply both Roslyn metadata and the compiler’s CLR reflection view. Trimming and AOT are disabled because the playground compiles arbitrary new code and accesses types by reflection.
+The browser bootstrap downloads the SDK's gzip assets through .NET's resource-loader hook, decompresses them and verifies the original boot-manifest SHA-256 before loading them. It also places the same assembly bytes into `/refs` in .NET’s virtual filesystem, using the manifest's original assembly names. The Alice browser host sets the trusted-platform paths from those files before invoking Roslyn. There is no second assembly download pass or separate reference manifest. These same untrimmed assemblies supply Roslyn metadata and the compiler’s CLR reflection view. Trimming and AOT remain disabled because the playground compiles arbitrary new code and accesses types by reflection. Hosts without gzip assets fall back to the original verified files.
 
 The SDK is pinned to 10.0.402. Earlier Mono releases have a [known Roslyn-triggered `Volatile.ReadBarrier` recursion bug](https://github.com/dotnet/runtime/pull/130303), fixed in .NET 10.0.11. A desktop-only test does not catch this failure.
 
@@ -30,7 +30,7 @@ The SDK is pinned to 10.0.402. Earlier Mono releases have a [known Roslyn-trigge
 
 Browser-hosted .NET has browser capabilities. Native libraries, desktop UI, subprocesses, blocking console input, and OS filesystem/network access are unavailable. Input reads EOF; file IO uses the runtime’s virtual filesystem. Thread-dependent programs and advanced generic CLR reflection requiring emitted proxy types may be unavailable. The playground preserves Alice’s purity/race checks; it does not force unsafe parallelization to work around browser constraints.
 
-The untrimmed runtime and Roslyn require a larger first download. Individual assets must stay below Cloudflare Pages’ 25 MiB limit. `_framework` assets are fingerprinted. No source or compiled user assembly is sent to a backend by the playground.
+The untrimmed runtime and Roslyn require a larger first download. A browser regression test limits compressed assembly/WASM transfers to 24 MiB and rejects duplicate assembly downloads. Individual assets must stay below Cloudflare Pages’ 25 MiB limit. `_framework` assets are fingerprinted and requested with immutable cache reuse. No source or compiled user assembly is sent to a backend by the playground.
 
 ## Verification
 
