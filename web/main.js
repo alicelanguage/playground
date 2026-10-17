@@ -1,4 +1,5 @@
 // DOM events, editor ergonomics and worker transport. All page HTML and compiler results are produced by Alice.
+import { fitEmbed } from './embed.js';
 const $ = id => document.getElementById(id);
 const source = $('source');
 const highlight = document.querySelector('#highlight code');
@@ -16,6 +17,7 @@ const params = new URLSearchParams(location.search);
 const embed = params.get('embed') === '1';
 if (embed) {
   document.body.classList.add('embed');
+  fitEmbed();
   if (params.get('stages') === '1') document.body.classList.add('stages');
   if (params.get('readonly') === '1') source.readOnly = true;
 }

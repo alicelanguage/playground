@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fit embedded playgrounds to their iframe height without an outer scrollbar, while preserving scrolling inside the editor and output panels.
+
 ## 0.10.1 — 2026-10-16
 
 - Add a standalone Alice-written browser playground using the pinned GitHub release.

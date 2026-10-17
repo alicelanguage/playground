@@ -132,6 +132,28 @@ test('embed.js turns data-alice-playground blocks into live iframes', async ({ p
   await expect(frame.locator('#console-output')).toContainText('embedded', { timeout:120000 });
 });
 
+for (const [width, height] of [[1224, 458], [800, 300], [390, 460]]) {
+  test(`embed fits its ${width}x${height} iframe without an outer scrollbar`, async ({ page }) => {
+    await page.setViewportSize({ width: width + 32, height: 700 });
+    await page.goto('/404.html');
+    await page.setContent(`<iframe src="/?embed=1&stages=1" style="width:${width}px;height:${height}px;border:0"></iframe>`);
+    const frame = page.frameLocator('iframe');
+    await expect(frame.locator('body')).toHaveClass(/embed/);
+    await frame.locator('html').evaluate(() => document.fonts.ready);
+    const metrics = await frame.locator('html').evaluate(el => ({
+      height: innerHeight, width: innerWidth, scrollHeight: el.scrollHeight, scrollWidth: el.scrollWidth,
+      workspaceBottom: document.querySelector('.workspace').getBoundingClientRect().bottom,
+    }));
+    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.height);
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.width);
+    expect(Math.abs(metrics.workspaceBottom - metrics.height)).toBeLessThanOrEqual(1);
+    await expect(frame.locator('#run')).toBeVisible();
+    if (width === 1224) await page.locator('iframe').screenshot({ path: 'test-results/playground-embed-no-scroll.png' });
+    await frame.locator('#source').fill('# scroll inside the editor\n'.repeat(100));
+    expect(await frame.locator('#source').evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
+  });
+}
+
 test('autocomplete suggests names while typing and accepts with Tab', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#run')).toBeEnabled({ timeout:120000 });
