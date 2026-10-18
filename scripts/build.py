@@ -160,6 +160,19 @@ def main():
     (framework / entry_name).write_bytes(entry_bytes)
     runtime = dist / "runtime.js"
     runtime.write_text(runtime.read_text().replace("'./_framework/dotnet.js'", f"'./_framework/{entry_name}'"))
+    # Version the entire startup graph too: a CDN or browser may already retain
+    # the unversioned scripts from an earlier deployment despite today's headers.
+    scripts = {}
+    for name in ("assets.js", "embed.js", "runtime.js", "worker.js", "main.js"):
+        source = (dist / name).read_text()
+        for original, versioned in scripts.items():
+            source = source.replace(f"'./{original}'", f"'./{versioned}'")
+        versioned = name.removesuffix(".js") + "." + hashlib.sha256(source.encode()).hexdigest()[:16] + ".js"
+        (dist / versioned).write_text(source)
+        (dist / name).write_text(source)
+        scripts[name] = versioned
+    index = dist / "index.html"
+    index.write_text(index.read_text().replace('./main.js', './' + scripts['main.js']))
     dlls = sorted(framework / asset["name"] for asset in resources if asset["name"].endswith(".dll"))
     if not dlls:
         raise RuntimeError("Expected untrimmed .dll assets (WasmEnableWebcil=false)")

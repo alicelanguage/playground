@@ -10,6 +10,22 @@ const integrity = 'sha256-' + createHash('sha256').update(bytes).digest('base64'
 const uri = 'https://playground.example/_framework/Example.fingerprint.dll';
 
 test('the published bootstrap bypasses previously cached unversioned runtime manifests', async () => {
+  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const main = html.match(/src="\.\/(main\.[a-f0-9]{16}\.js)"/);
+  assert.ok(main, 'page must bypass cached unversioned application scripts');
+  const visited = new Set();
+  async function verify(name) {
+    if (visited.has(name)) return;
+    visited.add(name);
+    const bytes = await readFile(new URL('../dist/' + name, import.meta.url));
+    assert.ok(name.includes(createHash('sha256').update(bytes).digest('hex').slice(0, 16)));
+    for (const match of bytes.toString().matchAll(/'\.\/([^']+\.js)'/g)) {
+      assert.match(match[1], /\.[a-f0-9]{16}\.js$/, 'all startup imports and workers must be versioned');
+      await verify(match[1]);
+    }
+  }
+  await verify(main[1]);
+  assert.equal(visited.size, 6, 'main, embed, worker, runtime, assets and .NET entry');
   const runtime = await readFile(new URL('../dist/runtime.js', import.meta.url), 'utf8');
   const entry = runtime.match(/from '\.\/(\_framework\/dotnet\.[a-f0-9]{16}\.js)'/);
   assert.ok(entry, 'runtime must import a content-versioned .NET boot manifest');

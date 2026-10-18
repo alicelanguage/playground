@@ -4,7 +4,7 @@ import { writeFile } from 'node:fs/promises';
 test('returning mobile clients never load an old unversioned runtime manifest', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const unversioned = [];
-  await page.route('**/_framework/dotnet.js', route => {
+  await page.route(/\/(?:_framework\/dotnet|main|embed|worker|runtime|assets)\.js(?:\?|$)/, route => {
     unversioned.push(route.request().url());
     return route.abort();
   });

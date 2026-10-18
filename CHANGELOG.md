@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fingerprint the full JavaScript startup graph so previously cached application scripts cannot retain an obsolete runtime manifest.
+
 - Version the .NET boot manifest by content so returning devices cannot mix cached compiler code with a newer reference loader and fail with `/refs` permission errors.
 
 - Download compressed .NET assemblies once, verify their original boot hashes, and reuse the bytes for compiler references instead of downloading every DLL again.
