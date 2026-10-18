@@ -153,6 +153,13 @@ def main():
         base = asset.name.removesuffix(".br").removesuffix(".gz")
         if base != "dotnet.js" and base not in referenced:
             asset.unlink()
+    # dotnet.js embeds the assembly manifest and changes with each app build.
+    # A new URL also bypasses immutable copies already stored on returning devices.
+    entry_bytes = (framework / "dotnet.js").read_bytes()
+    entry_name = "dotnet." + hashlib.sha256(entry_bytes).hexdigest()[:16] + ".js"
+    (framework / entry_name).write_bytes(entry_bytes)
+    runtime = dist / "runtime.js"
+    runtime.write_text(runtime.read_text().replace("'./_framework/dotnet.js'", f"'./_framework/{entry_name}'"))
     dlls = sorted(framework / asset["name"] for asset in resources if asset["name"].endswith(".dll"))
     if not dlls:
         raise RuntimeError("Expected untrimmed .dll assets (WasmEnableWebcil=false)")

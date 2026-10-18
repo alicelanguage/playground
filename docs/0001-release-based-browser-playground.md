@@ -30,7 +30,7 @@ The SDK is pinned to 10.0.402. Earlier Mono releases have a [known Roslyn-trigge
 
 Browser-hosted .NET has browser capabilities. Native libraries, desktop UI, subprocesses, blocking console input, and OS filesystem/network access are unavailable. Input reads EOF; file IO uses the runtime’s virtual filesystem. Thread-dependent programs and advanced generic CLR reflection requiring emitted proxy types may be unavailable. The playground preserves Alice’s purity/race checks; it does not force unsafe parallelization to work around browser constraints.
 
-The untrimmed runtime and Roslyn require a larger first download. A browser regression test limits compressed assembly/WASM transfers to 24 MiB and rejects duplicate assembly downloads. Individual assets must stay below Cloudflare Pages’ 25 MiB limit. `_framework` assets are fingerprinted and requested with immutable cache reuse. No source or compiled user assembly is sent to a backend by the playground.
+The untrimmed runtime and Roslyn require a larger first download. A browser regression test limits compressed assembly/WASM transfers to 24 MiB and rejects duplicate assembly downloads. Individual assets must stay below Cloudflare Pages’ 25 MiB limit. `_framework` assets are fingerprinted and requested with immutable cache reuse. The build also fingerprints `dotnet.js`, which embeds the assembly manifest, and rewrites the bootstrap import to prevent mixed versions on returning devices. The unversioned entry revalidates. No source or compiled user assembly is sent to a backend by the playground.
 
 ## Verification
 

@@ -35,8 +35,10 @@ jobs:
         run: python3 scripts/build.py
       - run: npm ci
       - run: npm run test:assets
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:browser
+      - name: Verify returning mobile clients in WebKit
+        run: npx playwright test --browser webkit --grep 'returning mobile'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: cloudflare-pages

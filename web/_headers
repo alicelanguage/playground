@@ -7,6 +7,9 @@
 /_framework/*
   Cache-Control: public, max-age=31536000, immutable
 
+/_framework/dotnet.js
+  Cache-Control: no-cache
+
 /*.js
   Cache-Control: no-cache
 

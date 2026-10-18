@@ -1,6 +1,21 @@
 import { test, expect } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
 
+test('returning mobile clients never load an old unversioned runtime manifest', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const unversioned = [];
+  await page.route('**/_framework/dotnet.js', route => {
+    unversioned.push(route.request().url());
+    return route.abort();
+  });
+  await page.goto('/');
+  await expect(page.locator('#stage-code')).toContainText('public static void Main', { timeout: 120000 });
+  await page.locator('#source').fill('6 * 7');
+  await page.locator('#run').click();
+  await expect(page.locator('#execution-value')).toContainText('42');
+  expect(unversioned).toEqual([]);
+});
+
 test('startup downloads compressed runtime assets once within its transfer budget', async ({ page }) => {
   const responses = [];
   page.on('response', response => {

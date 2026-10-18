@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Version the .NET boot manifest by content so returning devices cannot mix cached compiler code with a newer reference loader and fail with `/refs` permission errors.
+
 - Download compressed .NET assemblies once, verify their original boot hashes, and reuse the bytes for compiler references instead of downloading every DLL again.
 - Add a cold-start transfer budget and transport tests for compression, integrity and fallback behavior.
 - Fit embedded playgrounds to their iframe height without an outer scrollbar, while preserving scrolling inside the editor and output panels.

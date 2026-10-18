@@ -2,11 +2,22 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
+import { readFile } from 'node:fs/promises';
 import { createAssetLoader } from '../web/assets.js';
 
 const bytes = Buffer.from('MZ managed assembly fixture');
 const integrity = 'sha256-' + createHash('sha256').update(bytes).digest('base64');
 const uri = 'https://playground.example/_framework/Example.fingerprint.dll';
+
+test('the published bootstrap bypasses previously cached unversioned runtime manifests', async () => {
+  const runtime = await readFile(new URL('../dist/runtime.js', import.meta.url), 'utf8');
+  const entry = runtime.match(/from '\.\/(\_framework\/dotnet\.[a-f0-9]{16}\.js)'/);
+  assert.ok(entry, 'runtime must import a content-versioned .NET boot manifest');
+  const bytes = await readFile(new URL('../dist/' + entry[1], import.meta.url));
+  assert.equal(entry[1], `_framework/dotnet.${createHash('sha256').update(bytes).digest('hex').slice(0, 16)}.js`);
+  const headers = await readFile(new URL('../dist/_headers', import.meta.url), 'utf8');
+  assert.match(headers, /\/_framework\/dotnet\.js\s+Cache-Control: no-cache/);
+});
 
 for (const mode of ['gzip', 'host-decoded', 'missing-gzip']) {
   test(`runtime and compiler share one verified assembly (${mode})`, async t => {
