@@ -24,7 +24,7 @@ module Specs
     check(library.Success && library.Il.Contains("square") && library.Mir.Contains("MReturn"), "inspect declarations without Main")
     loop_result = PlaygroundApp.Compile("sum = 0\nfor i in 0...5\n sum += i\nend\nputs sum", true)
     check(loop_result.Success && loop_result.Output.strip == "10" && loop_result.Il.Contains("IL_"), "decode loop branches")
-    for example in ["pipeline", "fibonacci", "types", "patterns", "classes", "collections", "parallel"]
+    for example in ["pipeline", "fibonacci", "types", "patterns", "classes", "collections", "parallel", "performance"]
       sample = PlaygroundApp.Compile(View.Example(example), true)
       check(sample.Success && sample.Output.Length > 0, "example " + example + ": " + sample.Error)
     end

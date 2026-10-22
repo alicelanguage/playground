@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Build with Alice 0.12.0 (pinned checksum to be set when the release is published). New "Ownership & par for" example showing owned buffers, `par for` and `unchecked`; the editor highlights and completes `own`, `par` and `unchecked`. 0.12 prints floats with a decimal point and floors integer division (see the book's "What changed in 0.12").
+
 - Fingerprint the full JavaScript startup graph so previously cached application scripts cannot retain an obsolete runtime manifest.
 
 - Version the .NET boot manifest by content so returning devices cannot mix cached compiler code with a newer reference loader and fail with `/refs` permission errors.

@@ -25,7 +25,7 @@ if (embed) {
 // ---- syntax highlighting (mirrors the CLI REPL's highlighter) ----
 const KEYWORDS = new Set(('def class module struct enum interface record lib fun if elsif else unless while until for in do end case when then ' +
   'begin rescue ensure return break next yield self super and or not require using include extend getter setter property ' +
-  'spawn async await val var raise loop lambda proc describe context it expect macro static private protected public abstract').split(' '));
+  'spawn async await val var own par unchecked raise loop lambda proc describe context it expect macro static private protected public abstract').split(' '));
 const CONSTANTS = new Set(['nil', 'true', 'false']);
 const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const span = (cls, text) => `<span class="t-${cls}">${esc(text)}</span>`;
