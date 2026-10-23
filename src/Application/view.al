@@ -8,7 +8,7 @@ namespace Alice.Playground
 
     # Example ids and labels, in menu order (the first is the default program).
     def self.Examples() : Array(String)
-      ["pipeline|Iterator pipeline", "fibonacci|Fibonacci", "patterns|Pattern matching", "classes|Classes & properties", "collections|Strings & collections", "parallel|Parallel map", "types|Records & .NET", "safety|Immutable bindings", "performance|Ownership & par for"]
+      ["pipeline|Iterator pipeline", "fibonacci|Fibonacci", "patterns|Pattern matching", "classes|Classes & properties", "collections|Strings & collections", "parallel|Parallel map", "types|Records & .NET", "safety|Immutable bindings", "performance|Ownership & par for", "new013|New in 0.13"]
     end
 
     def self.Example(name : String) : String
@@ -19,6 +19,8 @@ namespace Alice.Playground
         "# Alice types on the .NET runtime\nrecord Point(x : Float64, y : Float64)\n\ndef distance(p : Point) : Float64\n  Math.Sqrt(p.x * p.x + p.y * p.y)\nend\n\np = Point.new(3.0, 4.0)\nputs p\nputs distance(p)\n"
       when "performance"
         "# Alice 0.12: ownership, par for and wrapping regions.\n# Open the C# tab: owned rows use Own<int>.Rent/Release, so the loop reuses two buffers.\ndef edit_distance(a : String, b : String) : Int32\n  previous = Array(Int32).new(b.size + 1)\n  for j in 0..b.size\n    previous[j] = j\n  end\n  for i in 1..a.size\n    own row = Array(Int32).new(b.size + 1)\n    row[0] = i\n    for j in 1..b.size\n      cost = a[i - 1] == b[j - 1] ? 0 : 1\n      row[j] = [row[j - 1] + 1, previous[j] + 1, previous[j - 1] + cost].min\n    end\n    previous = row\n  end\n  previous[b.size]\nend\n\n# Each row of the image is independent: par for runs rows in parallel (AL0209 if not).\ndef shade(w : Int32, h : Int32) : Int32\n  img = Array(Int32).new(w * h)\n  par for y in 0...h\n    for x in 0...w\n      img[y * w + x] = (x * x + y * y) % 7\n    end\n  end\n  img.sum\nend\n\n# Integer overflow raises; unchecked makes a hash wrap on purpose.\ndef hash(s : String) : Int32\n  h = 0\n  unchecked\n    for c in s.chars\n      h = h * 31 + c.ord\n    end\n  end\n  h\nend\n\nputs edit_distance(\"rabbit\", \"habit\")\nputs shade(32, 24)\nhash(\"Down the rabbit hole\")\n"
+      when "new013"
+        "# Alice 0.13: iterators, method references, named tuples, lock.\ndef squares(n : Int32) : IEnumerable(Int32)\n  i = 0\n  while i < n\n    yield i * i\n    i += 1\n  end\nend\n\ndef double(x : Int32) : Int32 = x * 2\n\ndef min_max(xs : Array(Int32)) : {lo : Int32, hi : Int32}\n  {lo: xs.min, hi: xs.max}\nend\n\nputs squares(6).ToList().join(\", \")\nputs [1, 2, 3].map(->double).join(\", \")\nr = min_max([7, 3, 9, 1])\nputs \"lo=\#{r.lo} hi=\#{r.hi}\"\n\nif word = [\"cat\", \"rabbit\", \"hat\"].find { |w| w.size > 4 }\n  puts \"found \#{word}\"\nend\n\ncounter = 0\ngate = Object.new\nlock gate\n  counter += 1\nend\ncounter\n"
       when "safety"
         "# val bindings are immutable. Try changing val to var.\nval answer = 41\nanswer = 42\nputs answer\n"
       when "patterns"
@@ -151,7 +153,7 @@ namespace Alice.Playground
         <body>
           <a class="skip" href="#source">Skip to editor</a>
           <header>
-            <div class="identity"><a class="wordmark" href="https://alice-lang.org" aria-label="Alice home"><img src="./brand/alice-mark.svg" alt="" width="38" height="38"><span>alice<span class="dot">.</span></span></a><span class="chip">playground · <b>v0.12.0</b></span></div>
+            <div class="identity"><a class="wordmark" href="https://alice-lang.org" aria-label="Alice home"><img src="./brand/alice-mark.svg" alt="" width="38" height="38"><span>alice<span class="dot">.</span></span></a><span class="chip">playground · <b>v0.13.0</b></span></div>
             <nav aria-label="Resources"><a class="hide-sm" href="https://alice-lang.org/documentation/" target="_blank" rel="noreferrer">Language guide ↗</a><a class="hide-sm" href="https://alice-lang.org">alice-lang.org</a><a class="hide-sm" href="#install">Install</a><button id="shortcuts" class="control ghost" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">Keys</button><a class="gh" href="https://github.com/alicelanguage/alice" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
           </header>
           <main>

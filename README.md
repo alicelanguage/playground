@@ -16,7 +16,7 @@ python3 scripts/serve.py
 
 Open **http://localhost:4173**. The deployable site is **`dist/`**.
 
-The build downloads **Alice v0.12.0** from [GitHub Releases](https://github.com/alicelanguage/alice/releases/tag/v0.12.0) and verifies the pinned SHA-256 in `alice.toml`. It does not reference another folder, a local Alice installation, or a compiler source project. This directory can be its own repository. `alice.toml` is the configuration source of truth; the build generates `.alice/*.alproj` and `.generated/*.g.cs` as temporary .NET build inputs.
+The build downloads **Alice v0.13.0** from [GitHub Releases](https://github.com/alicelanguage/alice/releases/tag/v0.13.0) and verifies the pinned SHA-256 in `alice.toml`. It does not reference another folder, a local Alice installation, or a compiler source project. This directory can be its own repository. `alice.toml` is the configuration source of truth; the build generates `.alice/*.alproj` and `.generated/*.g.cs` as temporary .NET build inputs.
 
 `DOTNET=/path/to/dotnet python3 scripts/build.py` selects a particular SDK installation.
 
